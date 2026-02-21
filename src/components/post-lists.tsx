@@ -7,6 +7,7 @@ import {
 import "./components.css";
 
 import { addPost, fetchPosts, fetchTags } from "../api/api";
+import { useState } from "react";
 
 interface Post {
   id?: number;
@@ -16,6 +17,7 @@ interface Post {
 }
 
 export default function Postlists() {
+  const [page, setPage] = useState(1);
   const {
     data: postData,
     isLoading,
@@ -23,8 +25,9 @@ export default function Postlists() {
     error,
     isFetched,
   } = useQuery({
-    queryKey: ["posts"],
-    queryFn: fetchPosts,
+    queryKey: ["posts", { page }],
+    queryFn: () => fetchPosts(page),
+    staleTime: 1000 * 5,
   });
 
   const { data: tagsData } = useQuery({
@@ -77,7 +80,7 @@ export default function Postlists() {
         />
 
         <div className="tags">
-          {tagsData?.map((tag) => {
+          {tagsData?.map((tag: string) => {
             return (
               <div key={tag}>
                 <input type="checkbox" name={tag} id={tag} />
@@ -91,8 +94,24 @@ export default function Postlists() {
       {isLoading && <p>Loading...</p>}
       {isError && <p>{error?.message}</p>}
       {isPostError && <p onClick={() => reset()}>unable to post </p>}
+      <div className="pages">
+        <button
+          onClick={() => setPage((page) => Math.max(page - 1, 0))}
+          disabled={!postData?.prev}
+        >
+          prev
+        </button>
+        <span> page: {page} </span>
+        <button
+          onClick={() => setPage((page) => page + 1)}
+          disabled={!postData?.next}
+        >
+          next
+        </button>
+      </div>
+
       {isFetched &&
-        postData.map((post: Post) => {
+        postData.data.map((post: Post) => {
           return (
             <div key={post.id} className="post">
               <div className="postTitle">{post?.title}</div>
