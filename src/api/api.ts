@@ -1,3 +1,10 @@
+interface Post {
+    id?: number;
+    title: string;
+    body?: string;
+    tags?: string[];
+}
+
 const fetchPosts = async (page) => {
   const response = await fetch(
     `http://localhost:3000/posts?_sort=-id&${
@@ -19,16 +26,17 @@ const fetchTags = async () => {
   return tagsData;
 };
 
-const addPost = async (post) => {
-  const response = await fetch("http://localhost:3000/posts", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(post),
-  });
 
-  return response.json();
+const addPost = async (post: Post): Promise<Post> => {
+    const response = await fetch("http://localhost:3000/posts", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(post),
+    });
+
+    return response.json();
 };
 
 export {fetchPosts, fetchTags, addPost};

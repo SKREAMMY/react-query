@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.21",
+    "@tanstack/react-query-devtools": "^5.91.3",
     "json-server": "^1.0.0-beta.9",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
